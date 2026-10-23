@@ -14,6 +14,8 @@ import {
   LoaderCircle,
   ShieldCheck,
   Info,
+  ChevronDown,
+  BuildingComplexIcon,
 } from "lucide-react";
 
 import { createProperty } from "../api/propertyApi";
@@ -26,6 +28,7 @@ const initialForm = {
   state: "",
   pincode: "",
   description: "",
+  propertyType:"",
 };
 
 const inputClass =
@@ -43,6 +46,15 @@ const inputClass =
 
 const labelClass =
   "mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200";
+
+  const PROPERTY_TYPES = [
+  { value: "RENTAL_PROPERTY", label: "Rental Property" },
+  { value: "PG", label: "Paying Guest (PG)" },
+  { value: "HOSTEL", label: "Hostel" },
+  { value: "HOTEL", label: "Hotel / OYO" },
+  { value: "GUEST_HOUSE", label: "Guest House" },
+  { value: "SERVICED_APARTMENT", label: "Serviced Apartment" },
+];
 
 function FormField({
   label,
@@ -126,6 +138,10 @@ export default function AddProperty() {
       return "Please enter the state.";
     }
 
+    if (!form.propertyType.trim()) {
+      return "Please enter the state.";
+    }
+
     if (!/^[1-9][0-9]{5}$/.test(form.pincode)) {
       return "Please enter a valid 6-digit Indian PIN code.";
     }
@@ -157,6 +173,7 @@ export default function AddProperty() {
         state: form.state.trim(),
         pincode: form.pincode.trim(),
         description: form.description.trim(),
+        propertyType : form.propertyType.trim(),
       };
 
       await createProperty(payload);
@@ -259,6 +276,69 @@ export default function AddProperty() {
               autoComplete="off"
             />
           </div>
+
+{/* PROPERTY TYPE SECTION */}
+<div className="border-b border-slate-100 px-6 py-6 dark:border-slate-800 sm:px-8">
+  <div className="mb-6 flex items-center gap-3">
+    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-500/15 dark:text-indigo-400">
+      <Building2 className="h-5 w-5" />
+    </div>
+
+    <div>
+      <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+        Property Type
+      </h2>
+
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+        Select the type of property or accommodation your business manages.
+      </p>
+    </div>
+  </div>
+
+    <div className="relative">
+      <select
+        id="propertyType"
+        name="propertyType"
+        value={form.propertyType}
+        onChange={handleChange}
+        required
+        className={`${inputClass} cursor-pointer appearance-none pr-11`}
+      >
+        <option value="" disabled>
+          Select Property Type
+        </option>
+
+        {PROPERTY_TYPES.map((type) => (
+          <option key={type.value} value={type.value}>
+            {type.label}
+          </option>
+        ))}
+      </select>
+
+      <ChevronDown
+        size={18}
+        className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
+      />
+    </div>
+
+  {form.propertyType && (
+    <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-3 dark:border-indigo-500/20 dark:bg-indigo-500/10">
+      <p className="text-sm text-indigo-700 dark:text-indigo-300">
+        {form.propertyType === "HOTEL"
+          ? "Manage hotel rooms, guest bookings, check-ins, and check-outs."
+          : form.propertyType === "PG"
+            ? "Manage paying guests, rooms, rent, and electricity bills."
+            : form.propertyType === "HOSTEL"
+              ? "Manage hostel rooms, occupants, and accommodation."
+              : form.propertyType === "RENTAL_PROPERTY"
+                ? "Manage rental properties, tenants, rooms, and monthly bills."
+                : "Manage your property and accommodation details."}
+      </p>
+    </div>
+  )}
+</div>
+
+
 
           {/* LOCATION SECTION */}
           <div className="border-b border-slate-100 px-6 py-7 dark:border-slate-800 sm:px-8">

@@ -12,10 +12,3 @@ export async function getProfile(userId) {
         method: "GET"
     });
 }
-
-export async function enableAutogeneratebillApi(enableAutoGenerateBill,userId) {
-    return apiRequest("/users/setting/auto-bill/", {
-        method: "PATCH",
-        body: JSON.stringify({ enableAutoGenerateBill: enableAutoGenerateBill, userId:userId })
-    });
-}

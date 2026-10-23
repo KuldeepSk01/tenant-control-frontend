@@ -8,6 +8,12 @@ import {
   ChevronDown,
   ClipboardList,
   DoorOpen,
+  Eye,
+  Mail,
+  Phone,
+  UserRound,
+  Building2,
+  Clock3,
   IndianRupee,
   LoaderCircle,
   LogOut,
@@ -23,6 +29,7 @@ import {
 
 import {
   getAssignments,
+  getAssignment,
   assignTenantToRoom,
   moveOut,
 } from "../api/tenantAssignmentsApi";
@@ -210,6 +217,29 @@ function SummaryCard({ title, value, icon: Icon, color }) {
   );
 }
 
+function formatDateTime(value) {
+  if (!value) return "—";
+  // Java LocalDateTime has no timezone. Display the supplied local clock
+  // without silently converting it to the browser's timezone.
+  const match = String(value).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (!match) return formatDate(value);
+  const [, year, month, day, hour, minute] = match;
+  const h = Number(hour);
+  return `${day}/${month}/${year}, ${String(h % 12 || 12).padStart(2, "0")}:${minute} ${h >= 12 ? "PM" : "AM"}`;
+}
+
+function DetailItem({ label, value, icon: Icon }) {
+  return (
+    <div className="min-w-0 rounded-xl border border-slate-100 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+      <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</p>
+      <p className="mt-1.5 flex items-start gap-2 break-words text-sm font-semibold text-slate-900 dark:text-white">
+        {Icon && <Icon className="mt-0.5 h-4 w-4 shrink-0 text-indigo-500" />}
+        <span className="min-w-0 break-all">{value === null || value === undefined || value === "" ? "—" : value}</span>
+      </p>
+    </div>
+  );
+}
+
 export default function Assignments() {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -232,6 +262,11 @@ export default function Assignments() {
 
   const [movingOutId, setMovingOutId] = useState(null);
   const [confirmMoveOut, setConfirmMoveOut] = useState(null);
+
+  const [viewAssignmentId, setViewAssignmentId] = useState(null);
+  const [viewAssignment, setViewAssignment] = useState(null);
+  const [viewLoading, setViewLoading] = useState(false);
+  const [viewError, setViewError] = useState(null);
 
   const loadAssignments = useCallback(async (showLoader = true) => {
     if (showLoader) setLoading(true);
@@ -430,6 +465,33 @@ export default function Assignments() {
     } finally {
       setAssigning(false);
     }
+  }
+
+  async function openAssignmentDetails(publicId) {
+    if (!publicId) return;
+    setViewAssignmentId(publicId);
+    setViewAssignment(null);
+    setViewError(null);
+    setViewLoading(true);
+    try {
+      const response = await getAssignment(publicId);
+      // Supports both { data: {...} } and a directly returned assignment.
+      const details = response?.data?.data ?? response?.data ?? response;
+      if (!details || typeof details !== "object" || !details.publicId) {
+        throw new Error("Assignment details were not returned by the API.");
+      }
+      setViewAssignment(details);
+    } catch (fetchError) {
+      setViewError(fetchError);
+    } finally {
+      setViewLoading(false);
+    }
+  }
+
+  function closeAssignmentDetails() {
+    setViewAssignmentId(null);
+    setViewAssignment(null);
+    setViewError(null);
   }
 
   async function handleMoveOut() {
@@ -720,19 +782,30 @@ export default function Assignments() {
                         </td>
 
                         <td className="whitespace-nowrap px-6 py-4 text-right">
-                          {status === "ACTIVE" && publicId ? (
-                            <button
-                              type="button"
-                              onClick={() => setConfirmMoveOut(assignment)}
-                              disabled={Boolean(movingOutId)}
-                              className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-50 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400"
-                            >
-                              <LogOut className="h-3.5 w-3.5" />
-                              Move Out
-                            </button>
-                          ) : (
-                            <span className="text-slate-400">—</span>
-                          )}
+                          <div className="flex items-center justify-end gap-2">
+                            {publicId && (
+                              <button
+                                type="button"
+                                onClick={() => openAssignmentDetails(publicId)}
+                                className="inline-flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100 dark:border-indigo-500/20 dark:bg-indigo-500/10 dark:text-indigo-300"
+                              >
+                                <Eye className="h-3.5 w-3.5" />
+                                View
+                              </button>
+                            )}
+                            {status === "ACTIVE" && publicId && (
+                              <button
+                                type="button"
+                                onClick={() => setConfirmMoveOut(assignment)}
+                                disabled={Boolean(movingOutId)}
+                                className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-50 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400"
+                              >
+                                <LogOut className="h-3.5 w-3.5" />
+                                Move Out
+                              </button>
+                            )}
+                            {!publicId && <span className="text-slate-400">—</span>}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -749,6 +822,127 @@ export default function Assignments() {
           )}
         </div>
       </div>
+
+      {/* ASSIGNMENT DETAILS / OCCUPANCY HISTORY MODAL */}
+      {viewAssignmentId && (
+        <div
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/65 p-3 backdrop-blur-sm sm:p-6"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeAssignmentDetails();
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="assignment-details-title"
+            className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-slate-900"
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-indigo-50 to-white px-5 py-5 dark:border-slate-800 dark:from-indigo-500/10 dark:to-slate-900 sm:px-7">
+              <div className="flex items-center gap-3">
+                <div className="rounded-2xl bg-indigo-600 p-3 text-white shadow-lg shadow-indigo-200 dark:shadow-none">
+                  <ClipboardList className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 id="assignment-details-title" className="text-lg font-bold text-slate-900 dark:text-white sm:text-xl">
+                    Assignment Details
+                  </h2>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    Tenant occupancy record and history
+                  </p>
+                </div>
+              </div>
+              <button type="button" onClick={closeAssignmentDetails} aria-label="Close assignment details" className="rounded-xl p-2 text-slate-500 hover:bg-white dark:hover:bg-slate-800">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="min-h-0 overflow-y-auto p-5 sm:p-7">
+              {viewLoading ? (
+                <div className="flex flex-col items-center justify-center gap-3 py-20 text-slate-500">
+                  <LoaderCircle className="h-8 w-8 animate-spin text-indigo-600" />
+                  <p className="text-sm">Loading assignment details...</p>
+                </div>
+              ) : viewError ? (
+                <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">
+                  <p className="font-semibold">Unable to load assignment</p>
+                  <p className="mt-1">{viewError?.message || "Please try again."}</p>
+                  <button type="button" onClick={() => openAssignmentDetails(viewAssignmentId)} className="mt-4 inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 font-semibold text-white">
+                    <RefreshCw className="h-4 w-4" /> Retry
+                  </button>
+                </div>
+              ) : viewAssignment ? (
+                <div className="space-y-6">
+                  <div className="flex flex-col gap-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-5 dark:border-slate-800 dark:bg-slate-800/50 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-100 text-xl font-bold text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+                        {(viewAssignment.tenant?.name || viewAssignment.tenantName || "T").charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">{viewAssignment.tenant?.name || viewAssignment.tenantName || "Unknown Tenant"}</h3>
+                        <p className="mt-1 break-all text-xs text-slate-500 dark:text-slate-400">Assignment ID: {viewAssignment.publicId}</p>
+                      </div>
+                    </div>
+                    <StatusBadge status={getAssignmentStatus(viewAssignment)} />
+                  </div>
+
+                  <section>
+                    <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+                      <UserRound className="h-4 w-4 text-indigo-500" /> Tenant Information
+                    </h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <DetailItem label="Full Name" value={viewAssignment.tenant?.name || viewAssignment.tenantName} />
+                      <DetailItem label="Mobile" value={viewAssignment.tenant?.mobile} icon={Phone} />
+                      <DetailItem label="Email" value={viewAssignment.tenant?.email} icon={Mail} />
+                      <DetailItem label="Address" value={viewAssignment.tenant?.address} icon={MapPin} />
+                      <DetailItem label="Managed By" value={viewAssignment.tenant?.adminName} />
+                      <DetailItem label="Tenant ID" value={viewAssignment.tenantPublicId || viewAssignment.tenant?.tenantId} />
+                    </div>
+                  </section>
+
+                  <section>
+                    <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+                      <Building2 className="h-4 w-4 text-indigo-500" /> Property & Room
+                    </h3>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <DetailItem label="Property" value={viewAssignment.propertyName} icon={Building2} />
+                      <DetailItem label="Room Number" value={viewAssignment.roomNumber} icon={DoorOpen} />
+                      <DetailItem label="Monthly Rent" value={formatCurrency(viewAssignment.rent)} icon={IndianRupee} />
+                      <DetailItem label="Security Deposit" value={formatCurrency(viewAssignment.securityDeposit)} icon={Wallet} />
+                    </div>
+                  </section>
+
+                  <section>
+                    <h3 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-700 dark:text-slate-200">
+                      <Clock3 className="h-4 w-4 text-indigo-500" /> Occupancy Timeline
+                    </h3>
+                    <div className="rounded-2xl border border-slate-100 p-5 dark:border-slate-800">
+                      <div className="relative ml-2 border-l-2 border-indigo-200 pl-6 dark:border-indigo-500/30">
+                        <div className="relative pb-7">
+                          <span className="absolute -left-[33px] top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-indigo-600 dark:border-slate-900" />
+                          <p className="font-semibold text-slate-900 dark:text-white">Tenant Moved In</p>
+                          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{formatDateTime(viewAssignment.moveInDate)}</p>
+                        </div>
+                        <div className="relative">
+                          <span className={`absolute -left-[33px] top-1 h-3.5 w-3.5 rounded-full border-2 border-white dark:border-slate-900 ${viewAssignment.moveOutDate ? "bg-slate-500" : "bg-emerald-500"}`} />
+                          <p className="font-semibold text-slate-900 dark:text-white">{viewAssignment.moveOutDate ? "Tenant Moved Out" : "Current Occupancy"}</p>
+                          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{viewAssignment.moveOutDate ? formatDateTime(viewAssignment.moveOutDate) : "No move-out date recorded"}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <p className="rounded-xl bg-indigo-50 px-4 py-3 text-xs leading-5 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300">
+                    This is the history of the selected room assignment. To display every past assignment for this tenant across different rooms, the backend must provide a tenant assignment history endpoint.
+                  </p>
+                </div>
+              ) : null}
+            </div>
+            <div className="flex justify-end border-t border-slate-100 px-5 py-4 dark:border-slate-800 sm:px-7">
+              <button type="button" onClick={closeAssignmentDetails} className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ASSIGN TENANT MODAL */}
       {isAssignModalOpen && (

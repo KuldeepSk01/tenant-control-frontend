@@ -37,8 +37,15 @@ export function getUser() {
         : null;
 }
 
+export function getUserProfile() {
+    const user = localStorage.getItem("user_profile");
+    return user
+        ? JSON.parse(user)
+        : null;
+}
 
 export function logout() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("userProfile");
 }

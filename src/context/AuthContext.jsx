@@ -7,6 +7,7 @@ import {
 import {
     getToken,
     getUser,
+    getUserProfile,
     logout as removeAuth
 } from "../utils/auth";
 
@@ -25,6 +26,8 @@ export function AuthProvider({
     const [user, setUser] =
         useState(getUser());
 
+ const [userProfile, setUserProfile] =
+        useState(getUserProfile());
 
     /*
      * Called after successful login.
@@ -45,9 +48,9 @@ export function AuthProvider({
         );
 
         setToken(accessToken);
-
         setUser(userData);
     }
+
 
 
     /*
@@ -60,6 +63,8 @@ export function AuthProvider({
         setToken(null);
 
         setUser(null);
+
+        setUserProfile(null);
     }
 
 
@@ -73,6 +78,16 @@ export function AuthProvider({
         setUser(userData);
     }
 
+    function updateUserProfile(userProfileData) {
+
+        localStorage.setItem(
+            "user_profile",
+            JSON.stringify(userProfileData)
+        );
+
+        setUserProfile(userProfileData);
+    }
+
 
     const value = {
 
@@ -80,13 +95,18 @@ export function AuthProvider({
 
         user,
 
+        userProfile,
+
         isAuthenticated: !!token,
 
         loginUser,
 
         updateUser,
 
+        updateUserProfile,
+
         logoutUser
+
     };
 
 
@@ -102,6 +122,5 @@ export function AuthProvider({
 
 
 export function useAuth() {
-
     return useContext(AuthContext);
 }

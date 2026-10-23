@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -20,9 +19,11 @@ import { login } from "../api/authApi";
 import { useAuth } from "../context/AuthContext";
 import ErrorMessage from "../components/ErrorMessage";
 
+import { getMyAdminProfile } from "../api/adminApi";
+
 export default function Login() {
   const navigate = useNavigate();
-  const { loginUser } = useAuth();
+  const { loginUser, updateUserProfile } = useAuth();
 
   const [loginWith, setLoginWith] = useState("");
   const [password, setPassword] = useState("");
@@ -53,18 +54,12 @@ export default function Login() {
       return;
     }
 
-    if (
-      isEmail &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)
-    ) {
+    if (isEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)) {
       setError("Please enter a valid email address.");
       return;
     }
 
-    if (
-      !isEmail &&
-      !/^[0-9]{10}$/.test(identifier)
-    ) {
+    if (!isEmail && !/^[0-9]{10}$/.test(identifier)) {
       setError("Please enter a valid 10-digit mobile number.");
       return;
     }
@@ -72,11 +67,11 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await login(
-        identifier,
-        loginType,
-        password
-      );
+      const response = await login(identifier, loginType, password);
+
+      if (!response || !response.accessToken) {
+        throw new Error("Invalid response from server. Please try again.");
+      }
 
       loginUser(response.accessToken, {
         email: response.email,
@@ -85,12 +80,30 @@ export default function Login() {
         role: response.role,
         userId: response.userId,
       });
+      // Fetch user profile after successful login
+      const profileResponse = await getMyAdminProfile();
+      const userProfileData = profileResponse?.data || profileResponse;
+
+      const userProfileDataObj = {
+        publicId: userProfileData.publicId,
+        userId: userProfileData.userId,
+        userName: userProfileData.userName,
+        businessName: "Kuldeep Sk's Business",
+        businessLogo: null,
+        businessEmail: "ksk105200@gmail.com",
+        businessMobile: "7827711985",
+        businessAddress: "Not provided",
+        city: "Not provided",
+        state: "Not provided",
+        pincode: null,
+        about: "Welcome to your business management dashboard.",
+      };
+
+      updateUserProfile(userProfileDataObj);
 
       navigate("/dashboard", { replace: true });
     } catch (err) {
-      setError(
-        err?.message || "Login failed. Please try again."
-      );
+      setError(err?.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -107,10 +120,8 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-[#f7f9fc] lg:grid lg:grid-cols-2">
-
       {/* LEFT: BRANDING PANEL */}
       <div className="relative hidden min-h-screen overflow-hidden bg-[#101d3d] lg:flex lg:flex-col lg:justify-between">
-
         {/* Decorative gradients */}
         <div className="pointer-events-none absolute -left-32 top-24 h-96 w-96 rounded-full bg-indigo-600/20 blur-3xl" />
         <div className="pointer-events-none absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
@@ -141,14 +152,12 @@ export default function Login() {
             <br />
             Empower tenants.
             <br />
-            <span className="text-indigo-400">
-              Simplify everything.
-            </span>
+            <span className="text-indigo-400">Simplify everything.</span>
           </h2>
 
           <p className="mt-6 max-w-md text-base leading-7 text-slate-300">
-            One powerful platform to manage your properties,
-            tenants, electricity billing, and payments.
+            One powerful platform to manage your properties, tenants,
+            electricity billing, and payments.
           </p>
 
           {/* Feature cards */}
@@ -184,7 +193,6 @@ export default function Login() {
 
       {/* RIGHT: LOGIN FORM */}
       <div className="flex min-h-screen flex-col">
-
         {/* Mobile logo */}
         <div className="flex items-center gap-3 px-6 pt-8 lg:hidden">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
@@ -197,7 +205,6 @@ export default function Login() {
 
         <div className="flex flex-1 items-center justify-center px-5 py-12 sm:px-10">
           <div className="w-full max-w-[440px]">
-
             {/* Heading */}
             <div className="mb-9">
               <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-600">
@@ -209,8 +216,7 @@ export default function Login() {
               </h2>
 
               <p className="mt-3 text-sm leading-6 text-slate-500">
-                Enter your credentials to access your
-                TenantControl dashboard.
+                Enter your credentials to access your TenantControl dashboard.
               </p>
             </div>
 
@@ -252,7 +258,6 @@ export default function Login() {
             <ErrorMessage error={error} />
 
             <form onSubmit={handleSubmit} className="space-y-5">
-
               {/* Email / Mobile */}
               <div>
                 <label
@@ -382,13 +387,9 @@ function FeatureCard({ icon: Icon, title, description }) {
         <Icon className="h-5 w-5" />
       </div>
 
-      <h3 className="text-sm font-semibold text-white">
-        {title}
-      </h3>
+      <h3 className="text-sm font-semibold text-white">{title}</h3>
 
-      <p className="mt-1.5 text-xs leading-5 text-slate-400">
-        {description}
-      </p>
+      <p className="mt-1.5 text-xs leading-5 text-slate-400">{description}</p>
     </div>
   );
 }

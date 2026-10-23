@@ -157,7 +157,8 @@ function getNumber(value) {
 }
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const {userProfile } = useAuth();
+  console.log("uerProfile is ",userProfile);
 
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -216,7 +217,7 @@ export default function Dashboard() {
     };
   }, [stats]);
 
-  const firstName = user?.name?.trim()?.split(/\s+/)[0] || "there";
+  const firstName = userProfile?.userName?.trim()?.split(/\s+/)[0] || "SK...";
 
   const currentDate = new Intl.DateTimeFormat("en-IN", {
     weekday: "long",
@@ -239,7 +240,8 @@ export default function Dashboard() {
             </div>
 
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Dashboard
+                            {userProfile.businessName}
+
             </h1>
 
             <p className="mt-2 text-sm text-slate-500">
