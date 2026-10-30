@@ -25,6 +25,7 @@ import {
   Search,
   X,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { getProperties } from "../api/propertyApi";
 import ErrorMessage from "../components/ErrorMessage";
@@ -56,6 +57,7 @@ function formatDate(value) {
 }
 
 function PropertyStatus({ status }) {
+  const { t } = useTranslation();
   const normalizedStatus = String(status || "UNKNOWN").toUpperCase();
 
   return (
@@ -79,7 +81,7 @@ function PropertyStatus({ status }) {
         }
       />
 
-      {normalizedStatus}
+      {t(normalizedStatus)}
     </span>
   );
 }
@@ -120,6 +122,7 @@ function StatCard({ title, value, icon: Icon, color }) {
 }
 
 export default function Properties() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -280,20 +283,20 @@ export default function Properties() {
         <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-2 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-              <span>Workspace</span>
+              <span>{t("Workspace")}</span>
               <span>/</span>
 
               <span className="font-semibold text-indigo-600 dark:text-indigo-400">
-                Properties
+                {t("Properties")}
               </span>
             </div>
 
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
-              Property Management
+              {t("Property Management")}
             </h1>
 
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Manage your properties, addresses and availability.
+              {t("Manage your properties, addresses and availability.")}
             </p>
           </div>
 
@@ -302,8 +305,8 @@ export default function Properties() {
               type="button"
               onClick={() => loadProperties(false)}
               disabled={loading || refreshing}
-              title="Refresh properties"
-              aria-label="Refresh properties"
+              title={t("Refresh properties")}
+              aria-label={t("Refresh properties")}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
             >
               <RefreshCw
@@ -316,7 +319,7 @@ export default function Properties() {
               className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 dark:shadow-none"
             >
               <Plus className="h-4 w-4" />
-              Add Property
+              {t("Add Property")}
             </Link>
           </div>
         </div>
@@ -336,7 +339,7 @@ export default function Properties() {
             <button
               type="button"
               onClick={() => setSuccess("")}
-              aria-label="Dismiss notification"
+              aria-label={t("Dismiss notification")}
               className="ml-auto"
             >
               <X className="h-4 w-4" />
@@ -347,21 +350,21 @@ export default function Properties() {
         {/* STATISTICS */}
         <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <StatCard
-            title="Total Properties"
+            title={t("Total Properties")}
             value={stats.total}
             icon={Building2}
             color="indigo"
           />
 
           <StatCard
-            title="Active Properties"
+            title={t("Active Properties")}
             value={stats.active}
             icon={CheckCircle2}
             color="emerald"
           />
 
           <StatCard
-            title="Inactive Properties"
+            title={t("Inactive Properties")}
             value={stats.inactive}
             icon={CirclePause}
             color="red"
@@ -375,11 +378,11 @@ export default function Properties() {
           <div className="flex flex-col gap-4 border-b border-slate-100 p-5 dark:border-slate-800 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                All Properties
+                {t("All Properties")}
               </h2>
 
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                {filteredProperties.length} matching properties
+                {filteredProperties.length} {t("matching properties")}
               </p>
             </div>
 
@@ -392,8 +395,8 @@ export default function Properties() {
                   type="search"
                   value={search}
                   onChange={handleSearchChange}
-                  placeholder="Search properties..."
-                  aria-label="Search properties"
+                  placeholder={t("Search properties...")}
+                  aria-label={t("Search properties")}
                   className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:focus:border-indigo-400 dark:focus:ring-indigo-500/10 sm:w-64"
                 />
               </div>
@@ -405,12 +408,12 @@ export default function Properties() {
                 <select
                   value={statusFilter}
                   onChange={handleStatusChange}
-                  aria-label="Filter property status"
+                  aria-label={t("Filter property status")}
                   className="w-full appearance-none rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-10 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-500/10 sm:w-44"
                 >
-                  <option value="ALL">All Status</option>
-                  <option value="ACTIVE">Active</option>
-                  <option value="INACTIVE">Inactive</option>
+                  <option value="ALL">{t("All Status")}</option>
+                  <option value="ACTIVE">{t("Active")}</option>
+                  <option value="INACTIVE">{t("Inactive")}</option>
                 </select>
               </div>
             </div>
@@ -433,13 +436,13 @@ export default function Properties() {
               </div>
 
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                No properties found
+                {t("No properties found")}
               </h3>
 
               <p className="mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400">
                 {search || statusFilter !== "ALL"
-                  ? "No properties match your current filters."
-                  : "Create your first property to start managing rooms and tenants."}
+                  ? t("No properties match your current filters.")
+                  : t("Create your first property to start managing rooms and tenants.")}
               </p>
 
               {search || statusFilter !== "ALL" ? (
@@ -452,7 +455,7 @@ export default function Properties() {
                   }}
                   className="mt-5 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200"
                 >
-                  Clear Filters
+                  {t("Clear Filters")}
                 </button>
               ) : (
                 <Link
@@ -460,7 +463,7 @@ export default function Properties() {
                   className="mt-5 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Property
+                  {t("Add Property")}
                 </Link>
               )}
             </div>
@@ -469,13 +472,13 @@ export default function Properties() {
               <table className="min-w-full text-left text-sm">
                 <thead className="bg-slate-50 dark:bg-slate-800/70">
                   <tr className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                    <th className="whitespace-nowrap px-6 py-4">Property</th>
-                    <th className="whitespace-nowrap px-6 py-4">Address</th>
-                    <th className="whitespace-nowrap px-6 py-4">City</th>
-                    <th className="whitespace-nowrap px-6 py-4">State</th>
-                    <th className="whitespace-nowrap px-6 py-4">PIN Code</th>
-                    <th className="whitespace-nowrap px-6 py-4">Status</th>
-                    <th className="whitespace-nowrap px-6 py-4">Created</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Property")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Address")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("City")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("State")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("PIN Code")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Status")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Created")}</th>
                   </tr>
                 </thead>
 
@@ -494,11 +497,11 @@ export default function Properties() {
 
                           <div>
                             <p className="font-semibold text-slate-900 dark:text-white">
-                              {property.name || "Unnamed Property"}
+                              {property.name || t("Unnamed Property")}
                             </p>
 
                             <p className="mt-1 text-xs text-slate-400">
-                              Property
+                              {t("Property")}
                             </p>
                           </div>
                         </div>
@@ -553,11 +556,15 @@ export default function Properties() {
           {!loading && (
             <div className="flex flex-col gap-2 border-t border-slate-100 px-6 py-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
               <span>
-                Showing {startItem}–{endItem} of {filteredProperties.length} properties
+                {t("Showing {{start}}–{{end}} of {{total}} properties", {
+                  start: startItem,
+                  end: endItem,
+                  total: filteredProperties.length,
+                })}
               </span>
 
               <span>
-                Total registered: {stats.total}
+                {t("Total registered: {{total}}", { total: stats.total })}
               </span>
             </div>
           )}
@@ -567,11 +574,10 @@ export default function Properties() {
         {!loading && totalPages > 1 && (
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Page{" "}
-              <span className="font-semibold text-slate-900 dark:text-white">
-                {page + 1}
-              </span>{" "}
-              of {totalPages}
+              {t("Page {{page}} of {{totalPages}}", {
+                page: page + 1,
+                totalPages,
+              })}
             </p>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -584,7 +590,7 @@ export default function Properties() {
                 className="inline-flex h-10 items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                {t("Previous")}
               </button>
 
               {visiblePages.map((pageIndex) => (
@@ -592,7 +598,7 @@ export default function Properties() {
                   key={pageIndex}
                   type="button"
                   onClick={() => setPage(pageIndex)}
-                  aria-label={`Go to page ${pageIndex + 1}`}
+                  aria-label={t("Go to page {{page}}", { page: pageIndex + 1 })}
                   aria-current={pageIndex === page ? "page" : undefined}
                   className={
                     "flex h-10 min-w-10 items-center justify-center rounded-xl px-3 text-sm font-semibold transition " +
@@ -615,7 +621,7 @@ export default function Properties() {
                 disabled={page >= totalPages - 1}
                 className="inline-flex h-10 items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
-                Next
+                {t("Next")}
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>

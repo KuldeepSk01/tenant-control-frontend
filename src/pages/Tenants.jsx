@@ -29,6 +29,7 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { getTenants } from "../api/tenantApi";
 import ErrorMessage from "../components/ErrorMessage";
@@ -80,6 +81,7 @@ function TenantAvatar({ name }) {
 }
 
 function EmptyState({ hasSearch, onClear }) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col items-center px-6 py-16 text-center">
       <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-3xl bg-indigo-50 text-indigo-500 dark:bg-indigo-500/10">
@@ -87,13 +89,13 @@ function EmptyState({ hasSearch, onClear }) {
       </div>
 
       <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-        {hasSearch ? "No matching tenants" : "No tenants found"}
+        {hasSearch ? t("No matching tenants") : t("No tenants found")}
       </h3>
 
       <p className="mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400">
         {hasSearch
-          ? "No tenants on this page match your search. Try a different keyword or page."
-          : "You haven't added any tenants yet. Create your first tenant to get started."}
+          ? t("No tenants on this page match your search. Try a different keyword or page.")
+          : t("You haven't added any tenants yet. Create your first tenant to get started.")}
       </p>
 
       {hasSearch ? (
@@ -102,7 +104,7 @@ function EmptyState({ hasSearch, onClear }) {
           onClick={onClear}
           className="mt-5 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200"
         >
-          Clear Search
+          {t("Clear Search")}
         </button>
       ) : (
         <Link
@@ -110,7 +112,7 @@ function EmptyState({ hasSearch, onClear }) {
           className="mt-5 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
         >
           <Plus className="h-4 w-4" />
-          Add Tenant
+          {t("Add Tenant")}
         </Link>
       )}
     </div>
@@ -118,6 +120,7 @@ function EmptyState({ hasSearch, onClear }) {
 }
 
 export default function Tenants() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -269,19 +272,19 @@ export default function Tenants() {
         <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-2 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-              <span>Workspace</span>
+              <span>{t("Workspace")}</span>
               <span>/</span>
               <span className="font-semibold text-indigo-600 dark:text-indigo-400">
-                Tenants
+                {t("Tenants")}
               </span>
             </div>
 
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
-              Tenant Management
+              {t("Tenant Management")}
             </h1>
 
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Manage tenant information, contact details and room assignments.
+              {t("Manage tenant information, contact details and room assignments.")}
             </p>
           </div>
 
@@ -290,8 +293,8 @@ export default function Tenants() {
               type="button"
               onClick={() => loadTenants(page, false)}
               disabled={loading || refreshing}
-              title="Refresh tenants"
-              aria-label="Refresh tenants"
+              title={t("Refresh tenants")}
+              aria-label={t("Refresh tenants")}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
             >
               <RefreshCw
@@ -304,7 +307,7 @@ export default function Tenants() {
               className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 dark:shadow-none"
             >
               <Plus className="h-4 w-4" />
-              Add Tenant
+              {t("Add Tenant")}
             </Link>
           </div>
         </div>
@@ -324,7 +327,7 @@ export default function Tenants() {
             <button
               type="button"
               onClick={() => setSuccess("")}
-              aria-label="Dismiss notification"
+              aria-label={t("Dismiss notification")}
               className="ml-auto"
             >
               <X className="h-4 w-4" />
@@ -342,7 +345,7 @@ export default function Tenants() {
 
               <div>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Total Tenants
+                  {t("Total Tenants")}
                 </p>
 
                 <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
@@ -360,7 +363,7 @@ export default function Tenants() {
 
               <div>
                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                  Current Page
+                  {t("Current Page")}
                 </p>
 
                 <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
@@ -381,11 +384,11 @@ export default function Tenants() {
           <div className="flex flex-col gap-4 border-b border-slate-100 p-5 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                All Tenants
+                {t("All Tenants")}
               </h2>
 
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                Search and manage tenant records
+                {t("Search and manage tenant records")}
               </p>
             </div>
 
@@ -396,8 +399,8 @@ export default function Tenants() {
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search current page..."
-                aria-label="Search tenants on current page"
+                placeholder={t("Search current page...")}
+                aria-label={t("Search tenants on current page")}
                 className={inputClass}
               />
             </div>
@@ -423,14 +426,14 @@ export default function Tenants() {
               <table className="min-w-full text-left text-sm">
                 <thead className="bg-slate-50 dark:bg-slate-800/70">
                   <tr className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                    <th className="whitespace-nowrap px-6 py-4">Tenant</th>
-                    <th className="whitespace-nowrap px-6 py-4">Mobile</th>
-                    <th className="whitespace-nowrap px-6 py-4">Email</th>
-                    <th className="whitespace-nowrap px-6 py-4">Address</th>
-                    <th className="whitespace-nowrap px-6 py-4">Room</th>
-                    <th className="whitespace-nowrap px-6 py-4">Added On</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Tenant")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Mobile")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Email")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Address")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Room")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Added On")}</th>
                     <th className="whitespace-nowrap px-6 py-4 text-right">
-                      Actions
+                      {t("Actions")}
                     </th>
                   </tr>
                 </thead>
@@ -451,11 +454,11 @@ export default function Tenants() {
 
                             <div>
                               <p className="font-semibold text-slate-900 dark:text-white">
-                                {tenant.name || "Unknown Tenant"}
+                                {tenant.name || t("Unknown Tenant")}
                               </p>
 
                               <p className="mt-1 text-xs text-slate-400">
-                                Tenant
+                                {t("Tenant")}
                               </p>
                             </div>
                           </div>
@@ -495,11 +498,13 @@ export default function Tenants() {
                         <td className="whitespace-nowrap px-6 py-4">
                           {tenant.roomNumber ? (
                             <span className="inline-flex rounded-lg bg-indigo-50 px-3 py-1.5 text-xs font-semibold text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300">
-                              Room {tenant.roomNumber}
+                              {t("Room {{roomNumber}}", {
+                                roomNumber: tenant.roomNumber,
+                              })}
                             </span>
                           ) : (
                             <span className="text-slate-400">
-                              Unassigned
+                              {t("Unassigned")}
                             </span>
                           )}
                         </td>
@@ -516,27 +521,27 @@ export default function Tenants() {
                               <>
                                 <Link
                                   to={`/tenants/${tenantId}`}
-                                  title="View tenant"
-                                  aria-label={`View ${tenant.name || "tenant"}`}
+                                  title={t("View tenant")}
+                                  aria-label={t("View tenant")}
                                   className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
                                 >
                                   <Eye className="h-3.5 w-3.5" />
-                                  View
+                                  {t("View")}
                                 </Link>
 
                                 <Link
                                   to={`/tenants/${tenantId}/edit`}
-                                  title="Edit tenant"
-                                  aria-label={`Edit ${tenant.name || "tenant"}`}
+                                  title={t("Edit tenant")}
+                                  aria-label={t("Edit tenant")}
                                   className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-indigo-700"
                                 >
                                   <Pencil className="h-3.5 w-3.5" />
-                                  Edit
+                                  {t("Edit")}
                                 </Link>
                               </>
                             ) : (
                               <span className="text-xs text-slate-400">
-                                Unavailable
+                                {t("Unavailable")}
                               </span>
                             )}
                           </div>
@@ -553,13 +558,19 @@ export default function Tenants() {
           {!loading && (
             <div className="flex flex-col gap-2 border-t border-slate-100 px-6 py-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
               <span>
-                Showing {filteredTenants.length} tenant(s) on this page
+                {t("Showing {{count}} tenant(s) on this page", {
+                  count: filteredTenants.length,
+                })}
               </span>
 
               <span>
                 {totalElements > 0
-                  ? `Records ${startItem}–${endItem} of ${totalElements}`
-                  : "No records"}
+                  ? t("Records {{start}}–{{end}} of {{total}}", {
+                      start: startItem,
+                      end: endItem,
+                      total: totalElements,
+                    })
+                  : t("No records")}
               </span>
             </div>
           )}
@@ -569,11 +580,10 @@ export default function Tenants() {
         {!loading && totalPages > 1 && (
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Page{" "}
-              <span className="font-semibold text-slate-900 dark:text-white">
-                {currentPage + 1}
-              </span>{" "}
-              of {totalPages}
+              {t("Page {{page}} of {{totalPages}}", {
+                page: currentPage + 1,
+                totalPages,
+              })}
             </p>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -583,11 +593,11 @@ export default function Tenants() {
                   setPage((previous) => Math.max(0, previous - 1))
                 }
                 disabled={!hasPrevious || loading}
-                aria-label="Previous page"
+                aria-label={t("Previous page")}
                 className="inline-flex h-10 items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                {t("Previous")}
               </button>
 
               {visiblePageNumbers.map((pageIndex) => (
@@ -596,7 +606,7 @@ export default function Tenants() {
                   type="button"
                   onClick={() => setPage(pageIndex)}
                   disabled={pageIndex === currentPage || loading}
-                  aria-label={`Go to page ${pageIndex + 1}`}
+                  aria-label={t("Go to page {{page}}", { page: pageIndex + 1 })}
                   aria-current={
                     pageIndex === currentPage ? "page" : undefined
                   }
@@ -619,10 +629,10 @@ export default function Tenants() {
                   )
                 }
                 disabled={!hasNext || loading}
-                aria-label="Next page"
+                aria-label={t("Next page")}
                 className="inline-flex h-10 items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
-                Next
+                {t("Next")}
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>

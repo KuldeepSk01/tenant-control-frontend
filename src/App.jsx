@@ -31,6 +31,10 @@ import ElectricityBills from "./pages/ElectricityBills";
 
 import Profile from "./pages/Profile";
 import Subscriptions from "./pages/Subscriptions";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import ContactSupport from "./pages/ContactSupport";
+import VerifyEmail from "./pages/VerifyEmail";
+
 
 // Route protection
 import ProtectedRoute from "./routes/protectRoutes";
@@ -46,6 +50,8 @@ export default function App() {
         {/* PUBLIC ROUTES */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+
 
         {/* AUTHENTICATION GUARD */}
         <Route element={<ProtectedRoute />}>
@@ -135,6 +141,12 @@ export default function App() {
               path="/electricity/bills"
               element={<ElectricityBills />}
             />
+
+            {/* Contact us */}
+            <Route path="/contact-support" element={<ContactSupport />} />
+
+            {/* Terms & Conditions */}
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
           </Route>
         </Route>

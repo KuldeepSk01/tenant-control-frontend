@@ -1,6 +1,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import {
   Building2,
@@ -157,6 +158,7 @@ function getNumber(value) {
 }
 
 export default function Dashboard() {
+  const { t } = useTranslation();
   const {userProfile } = useAuth();
   console.log("uerProfile is ",userProfile);
 
@@ -236,7 +238,7 @@ export default function Dashboard() {
           <div>
             <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-indigo-600">
               <LayoutDashboard className="h-4 w-4" />
-              Workspace Overview
+              {t("Workspace Overview")}
             </div>
 
             <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -245,11 +247,11 @@ export default function Dashboard() {
             </h1>
 
             <p className="mt-2 text-sm text-slate-500">
-              Welcome back,{" "}
+              {t("Welcome back,")}{" "}
               <span className="font-semibold text-slate-800">
                 {firstName}
               </span>
-              . Here's your property management overview.
+              {t(". Here's your property management overview.")}
             </p>
 
             <p className="mt-1 text-xs text-slate-400">
@@ -268,7 +270,7 @@ export default function Dashboard() {
                 refreshing ? "animate-spin" : ""
               }`}
             />
-            {refreshing ? "Refreshing..." : "Refresh data"}
+            {refreshing ? t("Refreshing...") : t("Refresh data")}
           </button>
         </div>
 
@@ -283,16 +285,15 @@ export default function Dashboard() {
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-indigo-400/20 bg-indigo-400/10 px-3 py-1.5 text-xs font-medium text-indigo-200">
                 <Activity className="h-3.5 w-3.5" />
-                Property Management
+                {t("Property Management")}
               </div>
 
               <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-                Your workspace, all in one place.
+                {t("Your workspace, all in one place.")}
               </h2>
 
               <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">
-                Stay organized with a clear view of your properties,
-                rooms, tenants, and electricity operations.
+                {t("Stay organized with a clear view of your properties, rooms, tenants, and electricity operations.")}
               </p>
             </div>
 
@@ -300,7 +301,7 @@ export default function Dashboard() {
               to="/properties"
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-indigo-50"
             >
-              View properties
+              {t("View properties")}
               <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
@@ -310,10 +311,10 @@ export default function Dashboard() {
         <div className="mb-5 flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-slate-900">
-              Overview Statistics
+              {t("Overview Statistics")}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              Key metrics from your property management system.
+              {t("Key metrics from your property management system.")}
             </p>
           </div>
           <ChartNoAxesColumnIncreasing className="hidden h-5 w-5 text-slate-400 sm:block" />
@@ -345,13 +346,13 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">
-            Dashboard statistics are currently unavailable.
+            {t("Dashboard statistics are currently unavailable.")}
             <button
               type="button"
               onClick={handleRefresh}
               className="ml-2 font-semibold text-indigo-600 hover:text-indigo-700"
             >
-              Try again
+              {t("Try again")}
             </button>
           </div>
         )}
@@ -363,10 +364,10 @@ export default function Dashboard() {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <h2 className="text-lg font-bold text-slate-900">
-                    Room Occupancy
+                    {t("Room Occupancy")}
                   </h2>
                   <p className="mt-1 text-sm text-slate-500">
-                    Current distribution of occupied and available rooms.
+                    {t("Current distribution of occupied and available rooms.")}
                   </p>
                 </div>
 
@@ -375,7 +376,7 @@ export default function Dashboard() {
                     {occupancy.percentage}%
                   </span>
                   <span className="text-xs font-medium text-slate-400">
-                    occupied
+                    {t("occupied")}
                   </span>
                 </div>
               </div>
@@ -383,7 +384,7 @@ export default function Dashboard() {
               <div
                 className="mt-7 h-3 overflow-hidden rounded-full bg-slate-100"
                 role="progressbar"
-                aria-label="Room occupancy"
+                aria-label={t("Room occupancy")}
                 aria-valuenow={occupancy.percentage}
                 aria-valuemin={0}
                 aria-valuemax={100}
@@ -398,17 +399,17 @@ export default function Dashboard() {
 
               <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <OccupancyDetail
-                  label="Total Rooms"
+                  label={t("Total Rooms")}
                   value={occupancy.total}
                   dot="bg-slate-400"
                 />
                 <OccupancyDetail
-                  label="Occupied"
+                  label={t("Occupied")}
                   value={occupancy.occupied}
                   dot="bg-indigo-500"
                 />
                 <OccupancyDetail
-                  label="Available"
+                  label={t("Available")}
                   value={occupancy.available}
                   dot="bg-emerald-500"
                 />
@@ -421,10 +422,10 @@ export default function Dashboard() {
         <section className="mt-10">
           <div className="mb-5">
             <h2 className="text-xl font-bold text-slate-900">
-              Management Center
+              {t("Management Center")}
             </h2>
             <p className="mt-1 text-sm text-slate-500">
-              Quick access to your management tools.
+              {t("Quick access to your management tools.")}
             </p>
           </div>
 
@@ -441,6 +442,7 @@ export default function Dashboard() {
 }
 
 function StatCard({ card, value }) {
+  const { t } = useTranslation();
   const Icon = card.icon;
   const color = COLORS[card.color];
 
@@ -461,23 +463,24 @@ function StatCard({ card, value }) {
       </p>
 
       <h3 className="mt-2 text-sm font-semibold text-slate-700">
-        {card.label}
+        {t(card.label)}
       </h3>
 
       <p className="mt-1 text-xs leading-5 text-slate-400">
-        {card.description}
+        {t(card.description)}
       </p>
     </div>
   );
 }
 
 function OccupancyDetail({ label, value, dot }) {
+  const { t } = useTranslation();
   return (
     <div className="rounded-xl bg-slate-50 px-4 py-3">
       <div className="flex items-center gap-2">
         <span className={`h-2.5 w-2.5 rounded-full ${dot}`} />
         <span className="text-xs font-medium text-slate-500">
-          {label}
+          {t(label)}
         </span>
       </div>
 
@@ -489,6 +492,7 @@ function OccupancyDetail({ label, value, dot }) {
 }
 
 function ModuleCard({ module }) {
+  const { t } = useTranslation();
   const Icon = module.icon;
   const color = COLORS[module.color];
 
@@ -504,16 +508,16 @@ function ModuleCard({ module }) {
       </div>
 
       <h3 className="mt-5 text-base font-bold text-slate-900">
-        {module.title}
+        {t(module.title)}
       </h3>
 
       <p className="mt-2 flex-1 text-sm leading-6 text-slate-500">
-        {module.description}
+        {t(module.description)}
       </p>
 
       <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
         <span className="text-sm font-semibold text-indigo-600">
-          {module.action}
+          {t(module.action)}
         </span>
 
         <ArrowRight className="h-4 w-4 text-indigo-600 transition-transform group-hover:translate-x-1" />
@@ -521,7 +525,6 @@ function ModuleCard({ module }) {
     </Link>
   );
 }
-
 
 
 

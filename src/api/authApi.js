@@ -19,6 +19,20 @@ export async function signup(data) {
     });
 }
 
+export async function verifyOTP(data) {
+    return apiRequest("/auth/verify-otp", {
+        method: "POST",
+        body: JSON.stringify(data)
+    });
+}
+
+export async function resentOTP(data) {
+    return apiRequest("/auth/resend-otp", {
+        method: "POST",
+        body: JSON.stringify(data)
+    });
+}
+
 export async function getProfile(userId, accessToken) {
     return apiRequest(`/users/profile/${userId}`, {
         headers: {

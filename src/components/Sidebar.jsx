@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const menuItems = [
   {
@@ -26,11 +27,11 @@ const menuItems = [
     icon: LayoutDashboard,
     to: "/dashboard",
   },
-  {
-    label: "Subscriptions",
-    icon: CreditCard,
-    to: "/subscriptions",
-  },
+  // {
+  //   label: "Subscriptions",
+  //   icon: CreditCard,
+  //   to: "/subscriptions",
+  // },
   {
     label: "Properties",
     icon: Building2,
@@ -79,6 +80,7 @@ export default function Sidebar({
 }) {
   const { user } = useAuth();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const [expandedMenus, setExpandedMenus] = useState({});
 
@@ -126,7 +128,7 @@ export default function Sidebar({
       {mobileOpen && (
         <button
           type="button"
-          aria-label="Close navigation"
+          aria-label={t("Close navigation")}
           onClick={onClose}
           className="fixed inset-0 z-40 bg-slate-950/60 lg:hidden"
         />
@@ -160,7 +162,7 @@ export default function Sidebar({
                   TenantControl
                 </h1>
                 <p className="text-xs text-slate-400">
-                  Management Platform
+                  {t("Management Platform")}
                 </p>
               </div>
             )}
@@ -170,7 +172,7 @@ export default function Sidebar({
                 TenantControl
               </h1>
               <p className="text-xs text-slate-400">
-                Management Platform
+                {t("Management Platform")}
               </p>
             </div>
           </NavLink>
@@ -178,7 +180,7 @@ export default function Sidebar({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close sidebar"
+            aria-label={t("Close sidebar")}
             className="rounded-lg p-2 text-slate-300 hover:bg-white/10 lg:hidden"
           >
             <X className="h-5 w-5" />
@@ -187,12 +189,12 @@ export default function Sidebar({
 
         {/* Navigation */}
         <nav
-          aria-label="Main navigation"
+          aria-label={t("Main navigation")}
           className="flex-1 space-y-1 overflow-y-auto px-3 py-6"
         >
           {(!collapsed || mobileOpen) && (
             <p className="mb-4 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
-              Workspace
+              {t("Workspace")}
             </p>
           )}
 
@@ -210,7 +212,7 @@ export default function Sidebar({
                   <button
                     type="button"
                     onClick={() => toggleGroup(item.label)}
-                    title={collapsed ? item.label : undefined}
+                    title={collapsed ? t(item.label) : undefined}
                     aria-expanded={expanded}
                     className={`
                       flex w-full items-center gap-3
@@ -228,7 +230,7 @@ export default function Sidebar({
                     {(!collapsed || mobileOpen) && (
                       <>
                         <span className="flex-1 text-left">
-                          {item.label}
+                          {t(item.label)}
                         </span>
                         {expanded ? (
                           <ChevronDown className="h-4 w-4" />
@@ -255,7 +257,7 @@ export default function Sidebar({
                             }`
                           }
                         >
-                          {child.label}
+                          {t(child.label)}
                         </NavLink>
                       ))}
                     </div>
@@ -269,7 +271,7 @@ export default function Sidebar({
                 key={item.to}
                 to={item.to}
                 end={item.to === "/dashboard"}
-                title={collapsed ? item.label : undefined}
+                title={collapsed ? t(item.label) : undefined}
                 onClick={handleNavigate}
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors ${
@@ -282,7 +284,7 @@ export default function Sidebar({
                 <Icon className="h-5 w-5 shrink-0" />
 
                 {(!collapsed || mobileOpen) && (
-                  <span>{item.label}</span>
+                  <span>{t(item.label)}</span>
                 )}
               </NavLink>
             );
@@ -303,10 +305,10 @@ export default function Sidebar({
             {(!collapsed || mobileOpen) && (
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-white">
-                  {user?.name || "User"}
+                  {user?.name || t("User")}
                 </p>
                 <p className="truncate text-xs text-slate-400">
-                  {user?.role || "Account"}
+                  {user?.email || t("Account")}
                 </p>
               </div>
             )}

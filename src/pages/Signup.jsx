@@ -119,22 +119,35 @@ export default function Signup() {
 
     try {
       // Send only the four fields expected by Spring Boot.
-      await signup(payload);
+      const response =  await signup(payload);
+      const data = response ? response.data : null
 
-      setSuccess(
-        "Account created successfully! Redirecting to login..."
-      );
+      // setSuccess(
+      //   "Account created successfully! Redirecting to login..."
+      // );
+
+      
 
       setForm(initialForm);
       setConfirmPassword("");
 
-      // Redirect immediately after a successful registration.
-      navigate("/login", {
-        replace: true,
-        state: {
-          message: "Registration successful. Please sign in.",
-        },
-      });
+      // // Redirect immediately after a successful registration.
+      // navigate("/login", {
+      //   replace: true,
+      //   state: {
+      //     message: "Registration successful. Please sign in.",
+      //   },
+      // });
+
+      navigate("/verify-email", {
+  state: {
+    email: data.email,
+  },
+});
+
+
+
+
     } catch (err) {
       setError(
         err?.message || "Registration failed. Please try again."

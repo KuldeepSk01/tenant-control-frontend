@@ -27,6 +27,7 @@ import {
   Wallet,
   X,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { getProperties } from "../api/propertyApi";
 import { getRoomsByProperty } from "../api/roomApi";
@@ -76,6 +77,7 @@ function isAvailable(room) {
 }
 
 function RoomStatus({ status }) {
+  const { t } = useTranslation();
   const normalized = String(status || "UNKNOWN").toUpperCase();
 
   const available = ["AVAILABLE", "VACANT"].includes(normalized);
@@ -101,7 +103,7 @@ function RoomStatus({ status }) {
         }`}
       />
 
-      {normalized}
+      {t(normalized)}
     </span>
   );
 }
@@ -140,6 +142,7 @@ function StatCard({ title, value, icon: Icon, color }) {
 }
 
 export default function Rooms() {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -329,20 +332,20 @@ export default function Rooms() {
         <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <div className="mb-2 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-              <span>Workspace</span>
+              <span>{t("Workspace")}</span>
               <span>/</span>
 
               <span className="font-semibold text-indigo-600 dark:text-indigo-400">
-                Rooms
+                {t("Rooms")}
               </span>
             </div>
 
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
-              Room Management
+              {t("Room Management")}
             </h1>
 
             <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              Manage rooms, occupancy, rent and security deposits.
+              {t("Manage rooms, occupancy, rent and security deposits.")}
             </p>
           </div>
 
@@ -351,8 +354,8 @@ export default function Rooms() {
               type="button"
               onClick={() => loadRooms(false)}
               disabled={loading || refreshing}
-              title="Refresh rooms"
-              aria-label="Refresh rooms"
+              title={t("Refresh rooms")}
+              aria-label={t("Refresh rooms")}
               className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300"
             >
               <RefreshCw
@@ -365,7 +368,7 @@ export default function Rooms() {
               className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-200 transition hover:bg-indigo-700 dark:shadow-none"
             >
               <Plus className="h-4 w-4" />
-              Add Room
+              {t("Add Room")}
             </Link>
           </div>
         </div>
@@ -385,7 +388,7 @@ export default function Rooms() {
             <button
               type="button"
               onClick={() => setSuccess("")}
-              aria-label="Dismiss notification"
+              aria-label={t("Dismiss notification")}
               className="ml-auto"
             >
               <X className="h-4 w-4" />
@@ -396,21 +399,21 @@ export default function Rooms() {
         {/* SUMMARY CARDS */}
         <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <StatCard
-            title="Total Rooms"
+            title={t("Total Rooms")}
             value={stats.total}
             icon={DoorOpen}
             color="indigo"
           />
 
           <StatCard
-            title="Available Rooms"
+            title={t("Available Rooms")}
             value={stats.available}
             icon={CheckCircle2}
             color="emerald"
           />
 
           <StatCard
-            title="Occupied Rooms"
+            title={t("Occupied Rooms")}
             value={stats.occupied}
             icon={Building2}
             color="amber"
@@ -424,11 +427,11 @@ export default function Rooms() {
           <div className="flex flex-col gap-4 border-b border-slate-100 p-5 dark:border-slate-800 xl:flex-row xl:items-center xl:justify-between">
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                All Rooms
+                {t("All Rooms")}
               </h2>
 
               <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                {filteredRooms.length} matching rooms
+                {filteredRooms.length} {t("matching rooms")}
               </p>
             </div>
 
@@ -441,8 +444,8 @@ export default function Rooms() {
                   type="search"
                   value={search}
                   onChange={handleSearchChange}
-                  placeholder="Search rooms..."
-                  aria-label="Search rooms"
+                  placeholder={t("Search rooms...")}
+                  aria-label={t("Search rooms")}
                   className={`${inputClass} pl-11 sm:w-52`}
                 />
               </div>
@@ -454,10 +457,10 @@ export default function Rooms() {
                 <select
                   value={propertyFilter}
                   onChange={handlePropertyChange}
-                  aria-label="Filter by property"
+                  aria-label={t("Filter by property")}
                   className={`${inputClass} pl-11 sm:w-48`}
                 >
-                  <option value="ALL">All Properties</option>
+                  <option value="ALL">{t("All Properties")}</option>
 
                   {properties.map((property) => (
                     <option
@@ -477,12 +480,12 @@ export default function Rooms() {
                 <select
                   value={statusFilter}
                   onChange={handleStatusChange}
-                  aria-label="Filter by status"
+                  aria-label={t("Filter by status")}
                   className={`${inputClass} pl-11 sm:w-40`}
                 >
-                  <option value="ALL">All Status</option>
-                  <option value="AVAILABLE">Available</option>
-                  <option value="OCCUPIED">Occupied</option>
+                  <option value="ALL">{t("All Status")}</option>
+                  <option value="AVAILABLE">{t("Available")}</option>
+                  <option value="OCCUPIED">{t("Occupied")}</option>
                 </select>
               </div>
             </div>
@@ -505,15 +508,15 @@ export default function Rooms() {
               </div>
 
               <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                No rooms found
+                {t("No rooms found")}
               </h3>
 
               <p className="mt-2 max-w-sm text-sm leading-6 text-slate-500 dark:text-slate-400">
                 {search ||
                 statusFilter !== "ALL" ||
                 propertyFilter !== "ALL"
-                  ? "No rooms match your current filters."
-                  : "Add a room to one of your properties to get started."}
+                  ? t("No rooms match your current filters.")
+                  : t("Add a room to one of your properties to get started.")}
               </p>
 
               {search ||
@@ -524,7 +527,7 @@ export default function Rooms() {
                   onClick={clearFilters}
                   className="mt-5 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200"
                 >
-                  Clear Filters
+                  {t("Clear Filters")}
                 </button>
               ) : (
                 <Link
@@ -532,7 +535,7 @@ export default function Rooms() {
                   className="mt-5 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
                 >
                   <Plus className="h-4 w-4" />
-                  Add Room
+                  {t("Add Room")}
                 </Link>
               )}
             </div>
@@ -541,13 +544,13 @@ export default function Rooms() {
               <table className="min-w-full text-left text-sm">
                 <thead className="bg-slate-50 dark:bg-slate-800/70">
                   <tr className="text-xs font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                    <th className="whitespace-nowrap px-6 py-4">Room</th>
-                    <th className="whitespace-nowrap px-6 py-4">Property</th>
-                    <th className="whitespace-nowrap px-6 py-4">Floor</th>
-                    <th className="whitespace-nowrap px-6 py-4">Type</th>
-                    <th className="whitespace-nowrap px-6 py-4">Rent</th>
-                    <th className="whitespace-nowrap px-6 py-4">Deposit</th>
-                    <th className="whitespace-nowrap px-6 py-4">Status</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Room")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Property")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Floor")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Type")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Rent")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Deposit")}</th>
+                    <th className="whitespace-nowrap px-6 py-4">{t("Status")}</th>
                   </tr>
                 </thead>
 
@@ -566,11 +569,11 @@ export default function Rooms() {
 
                           <div>
                             <p className="font-semibold text-slate-900 dark:text-white">
-                              Room {room.roomNumber || "—"}
+                              {t("Room")} {room.roomNumber || "—"}
                             </p>
 
                             <p className="mt-1 text-xs text-slate-400">
-                              Room Unit
+                              {t("Room Unit")}
                             </p>
                           </div>
                         </div>
@@ -580,7 +583,9 @@ export default function Rooms() {
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                           <Building2 className="h-4 w-4 text-slate-400" />
-                          {room.propertyName || "—"}
+                          {room.propertyName === "Unknown Property"
+                            ? t("Unknown Property")
+                            : room.propertyName || "—"}
                         </div>
                       </td>
 
@@ -622,11 +627,15 @@ export default function Rooms() {
           {!loading && (
             <div className="flex flex-col gap-2 border-t border-slate-100 px-6 py-4 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
               <span>
-                Showing {startItem}–{endItem} of {filteredRooms.length} rooms
+                {t("Showing {{start}}–{{end}} of {{total}} rooms", {
+                  start: startItem,
+                  end: endItem,
+                  total: filteredRooms.length,
+                })}
               </span>
 
               <span>
-                Total registered: {stats.total}
+                {t("Total registered: {{total}}", { total: stats.total })}
               </span>
             </div>
           )}
@@ -636,11 +645,10 @@ export default function Rooms() {
         {!loading && totalPages > 1 && (
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Page{" "}
-              <span className="font-semibold text-slate-900 dark:text-white">
-                {page + 1}
-              </span>{" "}
-              of {totalPages}
+              {t("Page {{page}} of {{totalPages}}", {
+                page: page + 1,
+                totalPages,
+              })}
             </p>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -653,7 +661,7 @@ export default function Rooms() {
                 className="inline-flex h-10 items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Previous
+                {t("Previous")}
               </button>
 
               {visiblePages.map((pageIndex) => (
@@ -661,7 +669,7 @@ export default function Rooms() {
                   key={pageIndex}
                   type="button"
                   onClick={() => setPage(pageIndex)}
-                  aria-label={`Go to page ${pageIndex + 1}`}
+                  aria-label={t("Go to page {{page}}", { page: pageIndex + 1 })}
                   aria-current={pageIndex === page ? "page" : undefined}
                   className={
                     "flex h-10 min-w-10 items-center justify-center rounded-xl px-3 text-sm font-semibold transition " +
@@ -684,7 +692,7 @@ export default function Rooms() {
                 disabled={page >= totalPages - 1}
                 className="inline-flex h-10 items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
               >
-                Next
+                {t("Next")}
                 <ChevronRight className="h-4 w-4" />
               </button>
             </div>
